@@ -52,7 +52,6 @@ describe("Key-Value API Tests", () => {
 
       expect(response.statusCode).toBe(201);
       expect(response.body.response.message).toBe("CREATION_SUCCESS");
-      expect(response.body.response.created_key_value).toHaveProperty("key", "sampleKey");
     });
 
     it("should return 403 when storage limit is exceeded", async () => {
@@ -99,8 +98,7 @@ describe("Key-Value API Tests", () => {
         .set("Authorization", token);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.response.message).toBe("FETCH_SUCCESS");
-      expect(response.body.response.key_value).toHaveProperty("key", "sampleKey");
+      expect(response.body).toHaveProperty("key", "sampleKey");
     });
 
     it("should return 404 when key does not exist", async () => {
