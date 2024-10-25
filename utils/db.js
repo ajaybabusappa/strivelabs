@@ -1,9 +1,18 @@
 const Sequelize = require('sequelize');
 
-const HOST = "localhost";
-const DBNAME =  "keyvaluedb";
-const DBUSER = "root";
-const DBPASS = "Secret@123";
+const dotenv = require('dotenv');
+dotenv.config({ path: './process.env' });
+
+// const HOST = "localhost";
+// const DBNAME =  "keyvaluedb";
+// const DBUSER = "root";
+// const DBPASS = "Secret@123";
+// const PORT = 3306;
+
+const HOST = process.env.DB_HOST;
+const DBNAME =  process.env.DB;
+const DBUSER = process.env.DB_USER;
+const DBPASS = process.env.DB_PASS;
 const PORT = 3306;
 
 
