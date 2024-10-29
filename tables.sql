@@ -8,7 +8,7 @@ CREATE TABLE tenants_table (
 
 
 CREATE TABLE key_value_table (
-    `key` VARCHAR(32) PRIMARY KEY,                                 -- Key as a string with max 32 characters
+    `key` VARCHAR(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci PRIMARY KEY,  -- Key as a UTF-8 string
     `value` JSON NOT NULL,                                         -- JSON object to store the value
     `ttl` INT NULL,                                                -- Time-to-live, can be NULL if no expiration is needed
     `tenant_id` INT NOT NULL, 
@@ -16,5 +16,5 @@ CREATE TABLE key_value_table (
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  -- Auto-updated timestamp
     FOREIGN KEY (`tenant_id`) REFERENCES tenants_table(`id`),
     CHECK (CHAR_LENGTH(`key`) <= 32),                              -- Ensures `key` is max 32 characters
-    CHECK (JSON_LENGTH(`value`) <= 16000)                          -- Ensures `value` JSON object size is within 16 KB
+    CHECK (OCTET_LENGTH(`value`) <= 16384)                         -- Ensures `value` JSON object size is within 16 KB (16,384 bytes)
 );

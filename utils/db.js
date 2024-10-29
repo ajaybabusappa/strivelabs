@@ -25,7 +25,8 @@ console.log(PORT);
 const sequelize = new Sequelize(DBNAME, DBUSER, DBPASS, {
     host: HOST,
     port: PORT,
-    logging: true, //Change to false when hosting
+    logging: true, //Change to false when hosting 
+    //logging: process.env.NODE_ENV == "PRODUCTION" ? false: true,
     dialect: 'mysql',
     multipleStatements: true,
     pool: {

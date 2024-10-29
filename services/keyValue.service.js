@@ -26,7 +26,7 @@ exports.createKeyValue = async (req, res) => {
 
     try {
         const tenantId = req.id;
-        const newKeyValueSize = Buffer.byteLength(JSON.stringify(req.body.value) , 'utf8') + req.body.key.length;
+        const newKeyValueSize = Buffer.byteLength(JSON.stringify(req.body.value) , 'utf8') + Buffer.byteLength(req.body.key , 'utf8');
 
         const tenant = await TenantModel.findByPk(tenantId, { transaction: t });
         if (!tenant) {
@@ -67,7 +67,6 @@ exports.createKeyValue = async (req, res) => {
 };
 
 exports.getKeyValue = async (req, res) => {
-    console.log("API HIT");
     let response = {};
     let request = {
     };
@@ -192,7 +191,7 @@ exports.deleteKeyValue = async (req, res) => {
         }
 
         // Calculate the size of the key-value pair to be deleted
-        const valueSize = JSON.stringify(keyValue.value).length; // Size of the JSON value in bytes
+        const valueSize = Buffer.byteLength(JSON.stringify(keyValue.value), 'utf8'); // Size of the JSON value in bytes
         const keySize = Buffer.byteLength(keyValue.key, 'utf8'); // Size of the key in bytes
         const totalSize = keySize + valueSize; // Total size to subtract from current_usage
 
@@ -271,7 +270,7 @@ exports.bulkCreateKeyValue = async (req, res) => {
 
         // Calculate the size of all new key-value pairs
         const totalNewSize = req.body.reduce((total, pair) => {
-            const valueSize = JSON.stringify(pair.value).length; // Size of the JSON value in bytes
+            const valueSize = Buffer.byteLength(JSON.stringify(pair.value), 'utf8'); // Size of the JSON value in bytes
             const keySize = Buffer.byteLength(pair.key, 'utf8'); // Size of the key in bytes
             console.log(valueSize+keySize);
             return total + keySize + valueSize; // Accumulate total size
@@ -280,7 +279,7 @@ exports.bulkCreateKeyValue = async (req, res) => {
         // Check for storage limit
         if (currentUsage + totalNewSize > storageLimit) {
             await transaction.rollback(); // Rollback if storage limit exceeded
-            return res.status(400).json({ message: "Storage limit exceeded." });
+            return res.status(403).json({ message: "Storage limit exceeded." });
         }
         
         // Format key-value pairs for bulk creation
